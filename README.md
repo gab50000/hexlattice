@@ -1,0 +1,4 @@
+hexlattice
+==========
+
+hexagonal lattice-gas
