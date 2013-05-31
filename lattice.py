@@ -13,18 +13,24 @@ def hexagon(center, radius):
 	return (upperleft, upperright, right, lowerright, lowerleft, left)
 	
 class hex_lattice:
-	def __init__(self,rows, columns, r, window, size):
-		self.nodes=[[0 for i in range(columns)] for j in range(rows)]
+	def __init__(self,rows, columns, r, particles, window, size):
+		self.rows=rows
+		self.columns=columns
+		#each node has a value for the position and one for the movement direction
+		self.nodes=[[[0,0] for i in range(columns)] for j in range(rows)]
 		self.radius=r
+		self.particles=particles
 		self.r_u=r/math.sqrt(3)*2.
 		self.latticevec=((self.r_u*1.5, self.radius), (self.r_u*1.5, -self.radius))
 		self.window=window
 		self.size=size
+	def place_particles(self, particles):
+		
 	def draw(self):
 		for i in enumerate(self.nodes):
 			for j in enumerate(i[1]):
 				if j[1]==0:
-					pygame.draw.polygon(self.window, (200,200,200), hexagon((j[0]*self.latticevec[0][0]+i[0]*self.latticevec[1][0], size[1]/2+j[0]*self.latticevec[0][1]+i[0]*self.latticevec[1][1]), self.radius), 1)
+					pygame.draw.polygon(self.window, (200,200,200), hexagon(((self.rows+self.columns-1)*self.radius/4.+j[0]*self.latticevec[0][0]+i[0]*self.latticevec[1][0], size[1]/2+j[0]*self.latticevec[0][1]+i[0]*self.latticevec[1][1]), self.radius), 1)
 				else:
 					pygame.draw.polygon(self.window, (0,0,0), hexagon((j[0]*self.latticevec[0][0]+i[0]*self.latticevec[1][0], size[1]/2+j[0]*self.latticevec[0][1]+i[0]*self.latticevec[1][1]), self.radius), 0)
 
@@ -33,7 +39,7 @@ size=(800,600)
 pygame.init()
 fps=pygame.time.Clock()
 window=pygame.display.set_mode(size)
-(hex_lines, hex_columns)=(10, 10)
+(hex_lines, hex_columns)=(20, 20)
 hexlatt=hex_lattice(hex_lines, hex_columns, min(int(float(size[0])/(hex_lines+hex_columns-1)/2), int(float(size[1])/(hex_lines+hex_columns))) , window, size)
 #~ hexlatt=hex_lattice(5,3,20, window, size)
 #~ hex1=hexagon(size, 20)
@@ -42,4 +48,4 @@ while 1:
 	#~ pygame.draw.polygon(window,(0,0,0), hex1, 2)
 	hexlatt.draw()
 	pygame.display.update()
-	fps.tick(30)
+	fps.tick(3)
