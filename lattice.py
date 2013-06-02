@@ -16,7 +16,20 @@ class particle:
 	def __init__(self, position, direction):
 		self.position=position
 		self.direction=direction
-	#~ def move(self):
+	def move(self):
+		if direction==0:
+			position[0]-=1
+			position[1]+=1	
+		elif direction==1:
+			position[1]+=1
+		elif direction==2:
+			position[0]+=1
+		elif direction==3:
+			position[0]+=1
+			position[1]-=1
+		elif direction==4:
+			position[1]-=1
+		else: position[0]-=1
 		
 class hex_lattice:
 	def __init__(self,rows, columns, r, particles, window, size):
@@ -30,7 +43,9 @@ class hex_lattice:
 		self.latticevec=((self.r_u*1.5, self.radius), (self.r_u*1.5, -self.radius))
 		self.window=window
 		self.size=size
+		self.particles=[]
 		self.place_particles(self.particles)
+		# self.init_particles
 		
 	def place_particles(self, particles):
 		while particles > 0:
@@ -40,7 +55,21 @@ class hex_lattice:
 				self.nodes[i][j] = 1
 				particles -=1
 	
-	#~ def check_collision(self):
+	def init_particles(self, p_nr):
+		positions=range(self.rows*self.columns)
+		random.shuffle(positions)
+		for i in range(p_nr):
+			self.particles.append(particle((positions[i]/self.columns, positions[i]%rows), random.randint(0,5)))
+		
+	def move(self):
+		for particle in self.particles:
+			particle.move()
+		self.check_collision()
+
+
+	
+	def check_collision(self):
+
 		
 	def draw(self):
 		for i in enumerate(self.nodes):
