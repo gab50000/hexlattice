@@ -70,7 +70,7 @@ class hex_lattice:
 		positions=range(self.rows*self.columns)
 		random.shuffle(positions)
 		for i in range(p_nr):
-			self.particles.append(particle([positions[i]/self.columns, positions[i]%self.rows], random.randint(0,5), self.rows, self.columns))
+			self.particles.append(particle([positions[i]/self.columns, positions[i]%self.rows], random.randint(0,5), self.columns, self.rows))
 			self.nodes[positions[i]/self.columns][positions[i]%self.rows].append(self.particles[-1])
 		
 	def move(self):
@@ -104,7 +104,7 @@ class hex_lattice:
 		
 	def draw(self):
 		for p in self.particles:
-			pygame.draw.polygon(self.window, (80,80,80), hexagon(((self.rows+self.columns-1)*self.radius/4.+p.position[1]*self.latticevec[0][0]+p.position[0]*self.latticevec[1][0]+1, size[1]/2+p.position[1]*self.latticevec[0][1]+p.position[0]*self.latticevec[1][1]), self.radius-1), 0)
+			pygame.draw.polygon(self.window, (80,80,80), hexagon(((self.rows+self.columns-1)*self.radius/4.+p.position[0]*self.latticevec[0][0]+p.position[1]*self.latticevec[1][0]+1, size[1]/2+p.position[0]*self.latticevec[0][1]+p.position[1]*self.latticevec[1][1]), self.radius-1), 0)
 		for i in range(self.rows):
 			for j in range(self.columns):
 				pygame.draw.polygon(self.window, (200,200,200), hexagon(((self.rows+self.columns-1)*self.radius/4.+i*self.latticevec[0][0]+j*self.latticevec[1][0], size[1]/2+i*self.latticevec[0][1]+j*self.latticevec[1][1]), self.radius), 2)
@@ -114,8 +114,8 @@ size=(800,600)
 pygame.init()
 fps=pygame.time.Clock()
 window=pygame.display.set_mode(size)
-(hex_lines, hex_columns)=(30, 40)
-hexlatt=hex_lattice(hex_lines, hex_columns, min(int(float(size[0])/(hex_lines+hex_columns-1)/2), int(float(size[1])/(hex_lines+hex_columns))), 50 , window, size)
+(hex_lines, hex_columns)=(50, 50)
+hexlatt=hex_lattice(hex_lines, hex_columns, min(int(float(size[0])/(hex_lines+hex_columns-1)/2), int(float(size[1])/(hex_lines+hex_columns))), 500 , window, size)
 #~ hexlatt=hex_lattice(5,3,20, window, size)
 #~ hex1=hexagon(size, 20)
 while 1:
@@ -124,4 +124,4 @@ while 1:
 	hexlatt.draw()
 	pygame.display.update()
 	hexlatt.move()
-	fps.tick(10)
+	fps.tick(20)
