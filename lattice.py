@@ -62,8 +62,8 @@ class hex_lattice:
 		self.window=window
 		self.size=size
 		self.particles=[]
-		#self.place_particles(self.particles)
-		self.init_particles(particles)
+		#self.init_particles(particles)
+		self.init_particles()
 		
 	
 	def init_particles(self, p_nr):
@@ -72,7 +72,14 @@ class hex_lattice:
 		for i in range(p_nr):
 			self.particles.append(particle([positions[i]/self.columns, positions[i]%self.rows], random.randint(0,5), self.columns, self.rows))
 			self.nodes[positions[i]/self.columns][positions[i]%self.rows].append(self.particles[-1])
-		
+	def init_testparticles(self):
+		self.particles.append(particle([self.columns/2, self.rows/2], 0,  self.columns, self.rows))
+		self.particles.append(particle([self.columns/2, self.rows/2], 2,  self.columns, self.rows))
+		self.particles.append(particle([self.columns/2, self.rows/2], 4,  self.columns, self.rows))
+		for p in self.particles:
+			self.nodes[p.position[0]][p.position[1]].append(p)
+			p.move(self.nodes)
+			p.direction=(p.direction+3)%6
 	def move(self):
 		for particle in self.particles:
 			particle.move(self.nodes)
@@ -94,12 +101,12 @@ class hex_lattice:
 				elif len(self.nodes[i][j])==3:
 					if self.nodes[i][j][0].direction+self.nodes[i][j][1].direction+self.nodes[i][j][2].direction == 6:
 						self.nodes[i][j][0].direction = 1
-						self.nodes[i][j][0].direction = 3
-						self.nodes[i][j][0].direction = 5
+						self.nodes[i][j][1].direction = 3
+						self.nodes[i][j][2].direction = 5
 					elif self.nodes[i][j][0].direction+self.nodes[i][j][1].direction+self.nodes[i][j][2].direction == 9:
 						self.nodes[i][j][0].direction = 0
-						self.nodes[i][j][0].direction = 2
-						self.nodes[i][j][0].direction = 4
+						self.nodes[i][j][1].direction = 2
+						self.nodes[i][j][2].direction = 4
 
 		
 	def draw(self):
@@ -124,4 +131,4 @@ while 1:
 	hexlatt.draw()
 	pygame.display.update()
 	hexlatt.move()
-	fps.tick(20)
+	fps.tick(1)
