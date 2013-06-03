@@ -80,6 +80,7 @@ class hex_lattice:
 
 	
 	#def check_collision(self):
+		#for 
 
 		
 	def draw(self):
@@ -87,7 +88,7 @@ class hex_lattice:
 			pygame.draw.polygon(self.window, (80,80,80), hexagon(((self.rows+self.columns-1)*self.radius/4.+p.position[1]*self.latticevec[0][0]+p.position[0]*self.latticevec[1][0]+1, size[1]/2+p.position[1]*self.latticevec[0][1]+p.position[0]*self.latticevec[1][1]), self.radius-1), 0)
 		for i in range(self.rows):
 			for j in range(self.columns):
-				pygame.draw.polygon(self.window, (200,200,200), hexagon(((self.rows+self.columns-1)*self.radius/4.+j*self.latticevec[0][0]+i*self.latticevec[1][0], size[1]/2+j*self.latticevec[0][1]+i*self.latticevec[1][1]), self.radius), 2)
+				pygame.draw.polygon(self.window, (200,200,200), hexagon(((self.rows+self.columns-1)*self.radius/4.+i*self.latticevec[0][0]+j*self.latticevec[1][0], size[1]/2+i*self.latticevec[0][1]+j*self.latticevec[1][1]), self.radius), 2)
 
 
 size=(800,600)			
