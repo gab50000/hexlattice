@@ -18,7 +18,10 @@ class particle:
 		self.direction=direction
 		self.columns=columns
 		self.rows=rows
-	def move(self):
+	def move(self, nodes):
+
+		nodes[self.position[0]][self.position[1]].remove(self)	
+
 		if self.direction==0:
 			self.position[0]-=1
 			self.position[1]+=1	
@@ -41,15 +44,19 @@ class particle:
 			self.position[0]-=self.rows
 		if self.position[1]>=self.columns:
 			self.position[1]-=self.columns
-		
+
+		try:	
+			nodes[self.position[0]][self.position[1]].append(self)
+		except IndexError:
+			pdb.set_trace()
+
 class hex_lattice:
 	def __init__(self,rows, columns, r, particles, window, size):
 		self.rows=rows
 		self.columns=columns
 		#each node has a value for the position and one for the movement direction
-		self.nodes=[[0 for i in range(columns)] for j in range(rows)]
+		self.nodes=[[[] for i in range(columns)] for j in range(rows)]
 		self.radius=r
-		self.particles=particles
 		self.r_u=r/math.sqrt(3)*2.
 		self.latticevec=((self.r_u*1.5, self.radius), (self.r_u*1.5, -self.radius))
 		self.window=window
@@ -58,29 +65,41 @@ class hex_lattice:
 		#self.place_particles(self.particles)
 		self.init_particles(particles)
 		
-	def place_particles(self, particles):
-		while particles > 0:
-			i = random.randint(0,self.columns-1)
-			j = random.randint(0,self.rows-1)
-			if self.nodes[i][j] == 0:
-				self.nodes[i][j] = 1
-				particles -=1
 	
 	def init_particles(self, p_nr):
 		positions=range(self.rows*self.columns)
 		random.shuffle(positions)
 		for i in range(p_nr):
 			self.particles.append(particle([positions[i]/self.columns, positions[i]%self.rows], random.randint(0,5), self.rows, self.columns))
+			self.nodes[positions[i]/self.columns][positions[i]%self.rows].append(self.particles[-1])
 		
 	def move(self):
 		for particle in self.particles:
-			particle.move()
-		#self.check_collision()
+			particle.move(self.nodes)
+		self.check_collision()
 
 
 	
-	#def check_collision(self):
-		#for 
+	def check_collision(self):
+		for i in range(len(self.nodes)):
+			for j in range(len(self.nodes[i])):
+				if len(self.nodes[i][j])==2:
+					if abs(self.nodes[i][j][0].direction - self.nodes[i][j][1].direction) == 3:
+						if random.randint(0,1)==0:
+							self.nodes[i][j][1].direction=self.nodes[i][j][0].direction-2
+							self.nodes[i][j][0].direction+=1
+						else:
+							self.nodes[i][j][1].direction=self.nodes[i][j][0].direction+2
+							self.nodes[i][j][0].direction-=1
+				elif len(self.nodes[i][j])==3:
+					if self.nodes[i][j][0].direction+self.nodes[i][j][1].direction+self.nodes[i][j][2].direction == 6:
+						self.nodes[i][j][0].direction = 1
+						self.nodes[i][j][0].direction = 3
+						self.nodes[i][j][0].direction = 5
+					elif self.nodes[i][j][0].direction+self.nodes[i][j][1].direction+self.nodes[i][j][2].direction == 9:
+						self.nodes[i][j][0].direction = 0
+						self.nodes[i][j][0].direction = 2
+						self.nodes[i][j][0].direction = 4
 
 		
 	def draw(self):
