@@ -63,8 +63,8 @@ class hex_lattice:
 		self.window=window
 		self.size=size
 		self.particles=[]
-		#self.init_particles(particles)
 		self.init_particles(particles)
+		#self.init_testparticles(2)
 		
 	
 	def init_particles(self, p_nr):
@@ -73,14 +73,22 @@ class hex_lattice:
 		for i in range(p_nr):
 			self.particles.append(particle([positions[i]/self.columns, positions[i]%self.rows], random.randint(0,5), self.columns, self.rows, (random.randint(0,255), random.randint(0,255), random.randint(0,255))))
 			self.nodes[positions[i]/self.columns][positions[i]%self.rows].append(self.particles[-1])
-	def init_testparticles(self):
-		self.particles.append(particle([self.columns/2, self.rows/2], 0,  self.columns, self.rows))
-		self.particles.append(particle([self.columns/2, self.rows/2], 2,  self.columns, self.rows))
-		self.particles.append(particle([self.columns/2, self.rows/2], 4,  self.columns, self.rows))
-		for p in self.particles:
-			self.nodes[p.position[0]][p.position[1]].append(p)
-			p.move(self.nodes)
-			p.direction=(p.direction+3)%6
+	def init_testparticles(self, p_nr):
+		if p_nr == 3:
+			self.particles.append(particle([self.columns/2, self.rows/2], 0,  self.columns, self.rows, (random.randint(0,255), random.randint(0,255), random.randint(0,255))))
+			self.particles.append(particle([self.columns/2, self.rows/2], 2,  self.columns, self.rows, (random.randint(0,255), random.randint(0,255), random.randint(0,255))))
+			self.particles.append(particle([self.columns/2, self.rows/2], 4,  self.columns, self.rows, (random.randint(0,255), random.randint(0,255), random.randint(0,255))))
+			for p in self.particles:
+				self.nodes[p.position[0]][p.position[1]].append(p)
+				p.move(self.nodes)
+				p.direction=(p.direction+3)%6
+		else:
+			self.particles.append(particle([self.columns/2, self.rows/2], 0,  self.columns, self.rows, (random.randint(0,255), random.randint(0,255), random.randint(0,255))))
+			self.particles.append(particle([self.columns/2, self.rows/2], 3,  self.columns, self.rows, (random.randint(0,255), random.randint(0,255), random.randint(0,255))))
+			for p in self.particles:
+				self.nodes[p.position[0]][p.position[1]].append(p)
+				p.move(self.nodes)
+				p.direction=(p.direction+3)%6
 	def move(self):
 		for particle in self.particles:
 			particle.move(self.nodes)
@@ -94,20 +102,15 @@ class hex_lattice:
 				if len(self.nodes[i][j])==2:
 					if abs(self.nodes[i][j][0].direction - self.nodes[i][j][1].direction) == 3:
 						if random.randint(0,1)==0:
-							self.nodes[i][j][1].direction=self.nodes[i][j][0].direction-2
-							self.nodes[i][j][0].direction+=1
+							self.nodes[i][j][1].direction=(self.nodes[i][j][0].direction-2) % 6
+							self.nodes[i][j][0].direction=(self.nodes[i][j][0].direction+1) % 6
 						else:
-							self.nodes[i][j][1].direction=self.nodes[i][j][0].direction+2
-							self.nodes[i][j][0].direction-=1
+							self.nodes[i][j][1].direction=(self.nodes[i][j][0].direction+2) % 6
+							self.nodes[i][j][0].direction=(self.nodes[i][j][0].direction-1) % 6
 				elif len(self.nodes[i][j])==3:
-					if self.nodes[i][j][0].direction+self.nodes[i][j][1].direction+self.nodes[i][j][2].direction == 6:
-						self.nodes[i][j][0].direction = 1
-						self.nodes[i][j][1].direction = 3
-						self.nodes[i][j][2].direction = 5
-					elif self.nodes[i][j][0].direction+self.nodes[i][j][1].direction+self.nodes[i][j][2].direction == 9:
-						self.nodes[i][j][0].direction = 0
-						self.nodes[i][j][1].direction = 2
-						self.nodes[i][j][2].direction = 4
+					self.nodes[i][j][0].direction = (self.nodes[i][j][0].direction+3)%6
+					self.nodes[i][j][1].direction = (self.nodes[i][j][1].direction+3)%6
+					self.nodes[i][j][2].direction = (self.nodes[i][j][2].direction+3)%6
 
 		
 	def draw(self):
@@ -122,13 +125,11 @@ size=(800,600)
 pygame.init()
 fps=pygame.time.Clock()
 window=pygame.display.set_mode(size)
-(hex_lines, hex_columns)=(20, 20)
-hexlatt=hex_lattice(hex_lines, hex_columns, min(int(float(size[0])/(hex_lines+hex_columns-1)/2), int(float(size[1])/(hex_lines+hex_columns))), 50 , window, size)
-#~ hexlatt=hex_lattice(5,3,20, window, size)
-#~ hex1=hexagon(size, 20)
+(hex_lines, hex_columns)=(50, 50)
+hexlatt=hex_lattice(hex_lines, hex_columns, min(int(float(size[0])/(hex_lines+hex_columns-1)/2), int(float(size[1])/(hex_lines+hex_columns))), 500 , window, size)
+
 while 1:
 	window.fill(pygame.Color(255,255,255))
-	#~ pygame.draw.polygon(window,(0,0,0), hex1, 2)
 	hexlatt.draw()
 	pygame.display.update()
 	hexlatt.move()
