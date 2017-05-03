@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import division
 import pygame, math, random, pdb
 
 
@@ -57,10 +58,10 @@ class Particle:
             pdb.set_trace()
 
     def draw(self, window):
-        center = ((self.rows + self.columns - 1) * self.radius / 4.
+        center = ((self.rows + self.columns - 1) * self.radius / 4
                        + self.position[0] * self.lattice_vec[0][0]
                        + self.position[1] * self.lattice_vec[1][0] + 1,
-                   size[1] / 2 + self.position[0] * self.lattice_vec[0][1]
+                   size[1] // 2 + self.position[0] * self.lattice_vec[0][1]
                        + self.position[1] * self.lattice_vec[1][1])
         pygame.draw.polygon(window, self.color, hexagon(center, self.radius - 1), 0)
 
@@ -80,26 +81,26 @@ class HexLattice:
         self.initialize_particles(particles)
 
     def initialize_particles(self, particle_number):
-        positions = range(self.rows * self.columns)
+        positions = list(range(self.rows * self.columns))
         random.shuffle(positions)
         for i in range(particle_number):
             color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-            self.particles.append(Particle([positions[i] / self.columns, positions[i] % self.rows],
+            self.particles.append(Particle([positions[i] // self.columns, positions[i] % self.rows],
                                            random.randint(0, 5), self.columns, self.rows,
                                            self.latticevec, self.radius, color))
-            self.nodes[positions[i] / self.columns][positions[i] % self.rows].append(
+            self.nodes[positions[i] // self.columns][positions[i] % self.rows].append(
                 self.particles[-1])
 
     def init_testparticles(self, p_nr):
         if p_nr == 3:
             self.particles.append(
-                Particle([self.columns / 2, self.rows / 2], 0, self.columns, self.rows,
+                Particle([self.columns // 2, self.rows // 2], 0, self.columns, self.rows,
                          (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
             self.particles.append(
-                Particle([self.columns / 2, self.rows / 2], 2, self.columns, self.rows,
+                Particle([self.columns // 2, self.rows // 2], 2, self.columns, self.rows,
                          (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
             self.particles.append(
-                Particle([self.columns / 2, self.rows / 2], 4, self.columns, self.rows,
+                Particle([self.columns // 2, self.rows // 2], 4, self.columns, self.rows,
                          (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
             for p in self.particles:
                 self.nodes[p.position[0]][p.position[1]].append(p)
@@ -107,10 +108,10 @@ class HexLattice:
                 p.direction = (p.direction + 3) % 6
         else:
             self.particles.append(
-                Particle([self.columns / 2, self.rows / 2], 0, self.columns, self.rows,
+                Particle([self.columns // 2, self.rows // 2], 0, self.columns, self.rows,
                          (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
             self.particles.append(
-                Particle([self.columns / 2, self.rows / 2], 3, self.columns, self.rows,
+                Particle([self.columns // 2, self.rows // 2], 3, self.columns, self.rows,
                          (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))))
             for p in self.particles:
                 self.nodes[p.position[0]][p.position[1]].append(p)
@@ -146,7 +147,7 @@ class HexLattice:
                 center =((self.rows + self.columns - 1) * self.radius / 4.
                              + i *self.latticevec[0][0]
                              + j * self.latticevec[1][0],
-                          size[1] / 2 + i * self.latticevec[0][1]
+                          size[1] // 2 + i * self.latticevec[0][1]
                              + j * self.latticevec[1][1]
                          )
                 pygame.draw.polygon(self.window, (200, 200, 200), hexagon(center, self.radius), 2)
